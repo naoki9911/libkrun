@@ -242,7 +242,7 @@ impl ContextConfig {
 static CTX_MAP: Lazy<Mutex<HashMap<u32, ContextConfig>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 static CTX_IDS: AtomicI32 = AtomicI32::new(0);
 
-#[cfg(all(not(feature = "tee"), not(feature = "efi")))]
+#[cfg(all(not(feature = "tee"), not(feature = "efi"), not(feature = "mewz")))]
 #[link(name = "krunfw")]
 extern "C" {
     fn krunfw_get_kernel(
@@ -258,6 +258,17 @@ extern "C" {
 extern "C" {
     fn krunfw_get_qboot(size: *mut size_t) -> *mut c_char;
     fn krunfw_get_initrd(size: *mut size_t) -> *mut c_char;
+    fn krunfw_get_kernel(
+        load_addr: *mut u64,
+        entry_addr: *mut u64,
+        size: *mut size_t,
+    ) -> *mut c_char;
+    fn krunfw_get_version() -> u32;
+}
+
+#[cfg(feature = "mewz")]
+#[link(name = "krunfw-mewz")]
+extern "C" {
     fn krunfw_get_kernel(
         load_addr: *mut u64,
         entry_addr: *mut u64,

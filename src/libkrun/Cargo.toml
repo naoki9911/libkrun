@@ -8,6 +8,7 @@ build = "build.rs"
 [features]
 tee = []
 amd-sev = [ "blk", "tee" ]
+mewz = []
 net = []
 blk = []
 efi = [ "blk", "net" ]
