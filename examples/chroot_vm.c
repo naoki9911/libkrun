@@ -23,6 +23,12 @@
 #define MAX_PATH 4096
 #endif
 
+#define ADDR_IP "192.168.10.2"
+#define ADDR_NETMASK "24"
+#define ADDR_GW "192.168.10.1"
+#define ENV_IP "ip="ADDR_IP"/"ADDR_NETMASK
+#define ENV_GW "gateway="ADDR_GW
+
 enum net_mode {
     NET_MODE_PASST = 0,
     NET_MODE_TSI,
@@ -167,7 +173,7 @@ int start_passt()
 
         printf("passing fd %s to passt", fd_as_str);
 
-        if (execlp("passt", "passt", "-f", "--fd", fd_as_str, NULL) < 0) {
+        if (execlp("passt", "passt", "-f", "--fd", fd_as_str, "-a", ADDR_IP, "-n", ADDR_NETMASK, "-g", ADDR_GW, "-t", "1234", NULL) < 0) {
             perror("execlp");
             return -1;
         }
@@ -187,6 +193,8 @@ int main(int argc, char *const argv[])
     const char *const envp[] =
     {
         "TEST=works",
+        ENV_IP,
+        ENV_GW,
         0
     };
     const char *const port_map[] =
